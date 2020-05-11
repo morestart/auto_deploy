@@ -21,7 +21,17 @@ class UbuntuService(BaseService):
 
     # TODO:
     def install_java(self):
-        super().install_java()
+        try:
+            subprocess.run("sudo apt-get install python-software-properties", shell=True, check=True)
+            subprocess.run("sudo add-apt-repository ppa:webupd8team/java", shell=True, check=True)
+            self.update_source_list()
+            try:
+                subprocess.run("sudo apt-get install oracle-java8-installer", shell=True, check=True)
+                subprocess.run("java -version", shell=True)
+            except subprocess.CalledProcessError:
+                Logger.error("安装jdk失败")
+        except subprocess.CalledProcessError:
+            Logger.error("安装依赖失败")
 
     # TODO:
     def install_emqx(self):
