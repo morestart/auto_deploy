@@ -22,11 +22,11 @@ class UbuntuService(BaseService):
     # TODO:
     def install_java(self):
         try:
-            subprocess.run("sudo apt-get install python-software-properties", shell=True, check=True)
+            subprocess.run("sudo apt install python-software-common", shell=True, check=True)
             subprocess.run("sudo add-apt-repository ppa:webupd8team/java", shell=True, check=True)
             self.update_source_list()
             try:
-                subprocess.run("sudo apt-get install oracle-java8-installer", shell=True, check=True)
+                subprocess.run("sudo apt install oracle-java8-installer", shell=True, check=True)
                 subprocess.run("java -version", shell=True)
             except subprocess.CalledProcessError:
                 Logger.error("安装jdk失败")
