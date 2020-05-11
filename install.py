@@ -118,5 +118,7 @@ class BaseService:
 
 
 if __name__ == '__main__':
-    # 执行前需要先调用更新软件包列表服务
-    ...
+    # TODO: 执行前需要先调用更新软件包列表服务
+    import system.ubuntu as ubuntu
+    service = ubuntu.UbuntuService()
+    service.install_ssh()
