@@ -4,40 +4,12 @@ import sys
 import time
 import os
 from pathlib import Path
+from tools.logger import Logger
 import getpass
 
 
 # 获取当前登录的用户名
 username = getpass.getuser()
-
-
-# 控制台带颜色的打印类
-class Logger:
-    OK = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[31m'
-    END = '\033[0m'
-
-    @staticmethod
-    def info(info):
-        try:
-            print(Logger.OK + "[INFO]" + info + Logger.END)
-        except UnicodeEncodeError:
-            Logger.warn("[ERROR] Not found chinese font, you must install chinese font")
-
-    @staticmethod
-    def warn(info):
-        try:
-            print(Logger.WARNING + "[WARN]" + info + Logger.END)
-        except UnicodeEncodeError:
-            Logger.warn("[ERROR] Not found chinese font, you must install chinese font, if not")
-
-    @staticmethod
-    def error(info):
-        try:
-            print(Logger.FAIL + "[ERR]" +info + Logger.END)
-        except UnicodeEncodeError:
-            Logger.warn("[ERROR] Not found chinese font, you must install chinese font, if not")
 
 
 # 公共服务
@@ -114,6 +86,10 @@ class BaseService:
 
     # 更改apt源
     def change_apt_source(self):
+        return
+
+    # 设置时区
+    def set_timezone(self):
         return
 
 
