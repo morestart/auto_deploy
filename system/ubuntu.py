@@ -1,4 +1,5 @@
-from install import BaseService, Logger
+from install import BaseService
+from tools.logger import Logger
 import subprocess
 
 
@@ -33,9 +34,98 @@ class UbuntuService(BaseService):
         except subprocess.CalledProcessError:
             Logger.error("安装依赖失败")
 
-    # TODO:
+    def set_timezone(self):
+        try:
+            subprocess.run("timedatectl set-timezone Asia/Shanghai", shell=True, check=True)
+        except subprocess.CalledProcessError:
+            Logger.error("时区设置错误")
+
     def install_emqx(self):
-        super().install_emqx()
+        try:
+            Logger.info("开始安装EMQ依赖")
+            subprocess.run("sudo apt update && sudo apt install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common", shell=True, check=True)
+            try:
+                Logger.info('添加GPG秘钥')
+                subprocess.run("curl -fsSL https://repos.emqx.io/gpg.pub | sudo apt-key add -", shell=True, check=True)
+                try:
+                    command = "sudo add-apt-repository \
+    \"deb [arch=amd64] https://repos.emqx.io/emqx-ce/deb/ubuntu/ \
+    ./$(lsb_release -cs) \
+    stable\""
+                    subprocess.run(command, shell=True, check=True)
+                    self.update_source_list()
+                    Logger.info("查询EMQ的可用版本")
+                    subprocess.run("sudo apt-cache madison emqx", shell=True)
+                    version = input("请输入需要的版本号,默认为最新版本(可直接回车)>")
+                    if version == '':
+                        try:
+                            subprocess.run("sudo apt install emqx", shell=True, check=True)
+                        except subprocess.CalledProcessError:
+                            Logger.error('安装EMQ失败,请重试')
+                    else:
+                        try:
+                            subprocess.run("sudo apt install emqx={}".format(version), shell=True, check=True)
+                            Logger.info('安装完成')
+                            get_better = input("是否调优?(y or n, default is y)>")
+                            if get_better == '':
+                                subprocess.run("sudo sysctl -w fs.file-max=2097152", shell=True)
+                                subprocess.run("sudo sysctl -w fs.nr_open=2097152", shell=True)
+                                subprocess.run("sudo echo 2097152 > /proc/sys/fs/nr_open", shell=True)
+                                subprocess.run("ulimit -n 1048576", shell=True)
+                                with open('/etc/sysctl.conf', 'a+') as f:
+                                    f.writelines('\n')
+                                    f.writelines("fs.file-max = 1048576")
+
+                                with open("/etc/systemd/system.conf", 'a+') as f:
+                                    f.writelines('\n')
+                                    f.writelines("DefaultLimitNOFILE=1048576")
+
+                                with open("/etc/security/limits.conf", "a+") as f:
+                                    f.writelines('\n')
+                                    f.writelines('*      soft   nofile      1048576')
+                                    f.writelines('\n')
+                                    f.writelines('*      hard   nofile      1048576')
+                                subprocess.run('sysctl -w net.core.somaxconn=32768', shell=True)
+                                subprocess.run('sysctl -w net.ipv4.tcp_max_syn_backlog=16384', shell=True)
+                                subprocess.run('sysctl -w net.core.netdev_max_backlog=16384', shell=True)
+                                subprocess.run('sysctl -w net.ipv4.ip_local_port_range=\'1000 65535\'', shell=True)
+                                subprocess.run('sysctl -w net.core.rmem_default=262144', shell=True)
+                                subprocess.run('sysctl -w net.core.wmem_default=262144', shell=True)
+                                subprocess.run('sysctl -w net.core.rmem_max=16777216', shell=True)
+                                subprocess.run('sysctl -w net.core.wmem_max=16777216', shell=True)
+                                subprocess.run('sysctl -w net.core.optmem_max=16777216', shell=True)
+                                subprocess.run('sysctl -w net.ipv4.tcp_rmem=\'1024 4096 16777216\'', shell=True)
+                                subprocess.run('sysctl -w net.ipv4.tcp_wmem=\'1024 4096 16777216\'', shell=True)
+                                subprocess.run('sysctl -w net.nf_conntrack_max=1000000', shell=True)
+                                subprocess.run('sysctl -w net.netfilter.nf_conntrack_max=1000000', shell=True)
+                                subprocess.run('sysctl -w net.netfilter.nf_conntrack_tcp_timeout_time_wait=30',
+                                               shell=True)
+                                subprocess.run('sysctl -w net.ipv4.tcp_max_tw_buckets=1048576', shell=True)
+                                subprocess.run('sysctl -w net.ipv4.tcp_fin_timeout=15', shell=True)
+
+                                with open('/etc/emqx/etc/emqx.conf', 'a+') as f:
+                                    f.writelines('\n')
+                                    f.writelines('node.process_limit = 2097152')
+                                    f.writelines('\n')
+                                    f.writelines('node.max_ports = 1048576')
+
+                                Logger.info('请手动配置TCP监听器的 Acceptor 池大小')
+                                Logger.info('sudo nano /etc/emqx/etc/emqx.conf')
+                                Logger.info('修改 listener.tcp.external.acceptors = 64')
+
+                        except subprocess.CalledProcessError:
+                            Logger.error('安装{}版本EMQ失败,请尝试其他版本'.format(version))
+                except subprocess.CalledProcessError:
+                    Logger.error('添加stable仓库失败')
+            except subprocess.CalledProcessError:
+                Logger.error('添加秘钥失败')
+        except subprocess.CalledProcessError:
+            Logger.error('安装依赖失败,请重试')
 
     def install_mosquitto(self):
         Logger.info("准备安装Mosquitto Broker")
@@ -88,4 +178,3 @@ class UbuntuService(BaseService):
             subprocess.run("sudo apt install nginx", shell=True, check=True)
         except subprocess.CalledProcessError:
             Logger.error("安装nginx失败")
-
