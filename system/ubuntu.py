@@ -16,23 +16,29 @@ class UbuntuService(BaseService):
     def upgrade_software(self):
         super().upgrade_software()
 
-    # TODO:
+    # TODO: 还未做
     def change_apt_source(self):
         super().change_apt_source()
 
-    # TODO:
+    # TODO: 下载测试
     def install_java(self):
         try:
-            subprocess.run("sudo apt install python-software-common", shell=True, check=True)
-            subprocess.run("sudo add-apt-repository ppa:webupd8team/java", shell=True, check=True)
-            self.update_source_list()
-            try:
-                subprocess.run("sudo apt install oracle-java8-installer", shell=True, check=True)
-                subprocess.run("java -version", shell=True)
-            except subprocess.CalledProcessError:
-                Logger.error("安装jdk失败")
+            subprocess.run('sudo wget https://download.oracle.com/otn/java/jdk/8u231-b11/'
+                           '5b13a193868b4bf28bcb45c792fce896/jdk-8u231-linux-x64.tar.gz?'
+                           'AuthParam=1589272186_e6da7f3c4190f957ea12e2d38a35b1d5', shell=True, check=True)
         except subprocess.CalledProcessError:
-            Logger.error("安装依赖失败")
+            Logger.error('下载jdk8失败')
+        # try:
+        #     subprocess.run("sudo apt install python-software-common", shell=True, check=True)
+        #     subprocess.run("sudo add-apt-repository ppa:webupd8team/java", shell=True, check=True)
+        #     self.update_source_list()
+        #     try:
+        #         subprocess.run("sudo apt install oracle-java8-installer", shell=True, check=True)
+        #         subprocess.run("java -version", shell=True)
+        #     except subprocess.CalledProcessError:
+        #         Logger.error("安装jdk失败")
+        # except subprocess.CalledProcessError:
+        #     Logger.error("安装依赖失败")
 
     def set_timezone(self):
         try:
