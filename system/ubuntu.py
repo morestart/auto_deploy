@@ -23,9 +23,15 @@ class UbuntuService(BaseService):
     # TODO: 下载测试
     def install_java(self):
         try:
-            subprocess.run('sudo wget https://download.oracle.com/otn/java/jdk/8u231-b11/'
-                           '5b13a193868b4bf28bcb45c792fce896/jdk-8u231-linux-x64.tar.gz?'
-                           'AuthParam=1589272186_e6da7f3c4190f957ea12e2d38a35b1d5', shell=True, check=True)
+            subprocess.run('https://github-production-release-asset-2e65be.s3.amazonaws.com/262994799/'
+                           '8f9e0500-946f-11ea-9dfd-d6a2ba2d2804?X-Amz-Algorithm='
+                           'AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20200512%2'
+                           'Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20200512T084439Z&X-Amz-Expires'
+                           '=300&X-Amz-Signature=f507010e6ebcbbca6253e6d20c20ea855dcc669c246fbe356'
+                           'bee550e8d58d0bc&X-Amz-SignedHeaders=host&actor_id=35556811&repo_id=262994799'
+                           '&response-content-disposition=attachment%3B%20filename%'
+                           '3Djdk-8u231-linux-x64.tar.gz&response-content-type='
+                           'application%2Foctet-stream', shell=True, check=True)
         except subprocess.CalledProcessError:
             Logger.error('下载jdk8失败')
         # try:
