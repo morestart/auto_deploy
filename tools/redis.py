@@ -1,5 +1,5 @@
 import subprocess
-from install import Logger
+from tools.logger import Logger
 
 
 class Redis:
