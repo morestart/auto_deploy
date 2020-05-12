@@ -1,6 +1,6 @@
 import subprocess
 import os
-from install import Logger
+from tools.logger import Logger
 
 
 class SSHServer:
