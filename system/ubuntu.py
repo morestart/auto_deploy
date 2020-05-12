@@ -1,6 +1,7 @@
 from install import BaseService
 from tools.logger import Logger
 import subprocess
+import os
 
 
 class UbuntuService(BaseService):
@@ -23,21 +24,19 @@ class UbuntuService(BaseService):
     # TODO: 下载测试
     def install_java(self):
         try:
-            subprocess.run('https://github.com/morestart/auto_deploy/'
-                           'releases/download/1.0/jdk-8u231-linux-x64.tar.gz', shell=True, check=True)
+            # 文件存在不需要重复下载
+            if os.path.exists('jdk-8u231-linux-x64.tar.gz'):
+                subprocess.run('sudo mkdir /usr/lib/jvm', shell=True, check=True)
+                subprocess.run('sudo tar -zxvf jdk-8u231-linux-x64.tar.gz -C /usr/lib/jvm')
+            else:
+                Logger.info('开始下载jdk8')
+                subprocess.run('sudo curl -LJO https://github.com/morestart/auto_deploy/releases/download/1.0/jdk-8u231'
+                               '-linux-x64.tar.gz', shell=True, check=True)
+                subprocess.run('sudo mkdir /usr/lib/jvm', shell=True, check=True)
+                subprocess.run('sudo tar -zxvf jdk-8u231-linux-x64.tar.gz -C /usr/lib/jvm')
+
         except subprocess.CalledProcessError:
             Logger.error('下载jdk8失败')
-        # try:
-        #     subprocess.run("sudo apt install python-software-common", shell=True, check=True)
-        #     subprocess.run("sudo add-apt-repository ppa:webupd8team/java", shell=True, check=True)
-        #     self.update_source_list()
-        #     try:
-        #         subprocess.run("sudo apt install oracle-java8-installer", shell=True, check=True)
-        #         subprocess.run("java -version", shell=True)
-        #     except subprocess.CalledProcessError:
-        #         Logger.error("安装jdk失败")
-        # except subprocess.CalledProcessError:
-        #     Logger.error("安装依赖失败")
 
     def set_timezone(self):
         try:
