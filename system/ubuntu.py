@@ -17,11 +17,27 @@ class UbuntuService(BaseService):
     def upgrade_software(self):
         super().upgrade_software()
 
-    # TODO: 还未做
     def change_apt_source(self):
-        super().change_apt_source()
+        Logger.info('备份系统源')
+        subprocess.run('cp /etc/apt/sources.list /etc/apt/sources.list.bak', shell=True)
+        with open('/etc/apt/sources.list', 'w+') as f:
+            f.writelines(
+                """
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
 
-    # TODO: 下载测试
+# 预发布软件源，不建议启用
+# deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+            """)
+
     def install_java(self):
         try:
             # 文件存在不需要重复下载
@@ -30,10 +46,24 @@ class UbuntuService(BaseService):
                 subprocess.run('sudo tar -zxvf jdk-8u231-linux-x64.tar.gz -C /usr/lib/jvm')
             else:
                 Logger.info('开始下载jdk8')
-                subprocess.run('sudo curl -LJO https://github.com/morestart/auto_deploy/releases/download/1.0/jdk-8u231'
+                subprocess.run('sudo wget https://github.com/morestart/auto_deploy/releases/download/1.0/jdk-8u231'
                                '-linux-x64.tar.gz', shell=True, check=True)
                 subprocess.run('sudo mkdir /usr/lib/jvm', shell=True, check=True)
                 subprocess.run('sudo tar -zxvf jdk-8u231-linux-x64.tar.gz -C /usr/lib/jvm')
+
+                with open('sudo nano ~/.bashrc', 'a+') as f:
+                    f.writelines('\n')
+                    f.writelines('export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_231')
+                    f.writelines('\n')
+                    f.writelines('export JRE_HOME=${JAVA_HOME}/jre')
+                    f.writelines('\n')
+                    f.writelines('export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib')
+                    f.writelines('\n')
+                    f.writelines('export PATH=${JAVA_HOME}/bin:$PATH')
+                subprocess.run('source ~/.bashrc', shell=True)
+                subprocess.run('sudo update-alternatives --install /usr/bin/java java '
+                               '/usr/lib/jvm/jdk1.8.0_231/bin/java 300', shell=True)
+                subprocess.run('java -version', shell=True)
 
         except subprocess.CalledProcessError:
             Logger.error('下载jdk8失败')
