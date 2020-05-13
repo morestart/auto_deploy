@@ -5,17 +5,18 @@ import time
 import os
 from pathlib import Path
 from tools.logger import Logger
-import getpass
+# import getpass
 
 
 # 获取当前登录的用户名
-username = getpass.getuser()
+# username = getpass.getuser()
 
 
 # 公共服务
 class BaseService:
     def __init__(self):
-        self.username = username
+        # self.username = username
+        ...
 
     # 获取当前的Python版本
     def get_python_version(self):
@@ -35,7 +36,7 @@ class BaseService:
     def upgrade_python3(self):
         return
 
-    # 更新软件源
+    # 更新软件源, apt 工具仅针对ubuntu debian系, 其他linux发行版需要重写该方法
     def update_source_list(self):
         Logger.info("准备更新软件包列表")
         try:
@@ -48,7 +49,7 @@ class BaseService:
         except subprocess.CalledProcessError:
             Logger.error("更新失败")
 
-    # 更新软件
+    # 更新软件, apt 工具仅针对ubuntu debian系, 其他linux发行版需要重写该方法
     def upgrade_software(self):
         try:
             subprocess.run("sudo apt-get upgrade", shell=True, check=True)
@@ -93,8 +94,33 @@ class BaseService:
         return
 
 
+class Install:
+    def __init__(self, system_info: str):
+        self.os_name = system_info
+
+    def help_info(self):
+        ...
+
+    def install(self):
+        if self.os_name == 'Windows':
+            Logger.warn('暂不支持此系统')
+        elif self.os_name == "Linux":
+            out = subprocess.check_output("cat /etc/os-release", shell=True)
+            out = out.decode("utf-8").split('\n')
+            # 判断系统为ubuntu1804
+            if "VERSION_ID=\"18.04\"" in out and "NAME=\"Ubuntu\"" in out:
+                ...
+            else:
+                Logger.warn('暂不支持当前版本的ubuntu')
+
+
 if __name__ == '__main__':
     # TODO: 执行前需要先调用更新软件包列表服务
     import system.ubuntu as ubuntu
-    service = ubuntu.UbuntuService()
-    service.install_java()
+    import platform
+    system = platform.system()
+    from menu.menu import Menu
+    try:
+        Menu().show_menu()
+    except PermissionError:
+        Logger.error('请使用sudo/root权限运行本程序')
