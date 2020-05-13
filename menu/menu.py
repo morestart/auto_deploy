@@ -37,7 +37,7 @@ class Menu:
                 # 其他命令使用install函数安装
                 self.install(option)
         elif option == "退出":
-            exit_code = False
+            exit(0)
         elif option == "工具使用":
             print('工具使用')
 
@@ -53,4 +53,6 @@ class Menu:
                     UbuntuService().get_python_version()
             # TODO: 其他系统
             else:
-                Logger.warn('未知系统...')
+                Logger.warn('暂不支持当前系统')
+        else:
+            Logger.warn('暂不支持当前系统')
