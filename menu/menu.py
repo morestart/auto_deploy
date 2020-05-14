@@ -3,6 +3,7 @@ try:
     import platform
     from tools.logger import Logger
     from system.ubuntu import UbuntuService
+    import subprocess
 except ImportError:
     import subprocess
     subprocess.run('sudo apt install pip3', shell=True)
@@ -10,6 +11,7 @@ except ImportError:
     from pick import pick
     import platform
     from tools.logger import Logger
+    from system.ubuntu import UbuntuService
 
 
 class Menu:
@@ -41,7 +43,7 @@ class Menu:
         elif option == "工具使用":
             print('工具使用')
 
-    def install(self, command):
+    def install(self, command: str):
         if self.os_name == 'Windows':
             Logger.warn('暂不支持此系统')
         elif self.os_name == "Linux":
@@ -49,7 +51,6 @@ class Menu:
             out = out.decode("utf-8").split('\n')
             # 判断系统为ubuntu1804
             if "VERSION_ID=\"18.04\"" in out and "NAME=\"Ubuntu\"" in out:
-                # TODO: 其他命令需调用的函数在后面添加,查看py版本放到其他目录中,这里仅做测试使用
                 if command == "更新Python3":
                     UbuntuService().upgrade_python3()
                 elif command == "更新软件包列表":
@@ -79,3 +80,7 @@ class Menu:
                 Logger.warn('暂不支持当前系统')
         else:
             Logger.warn('暂不支持当前系统')
+
+    # TODO:
+    def tools_use(self, command: str):
+        ...
