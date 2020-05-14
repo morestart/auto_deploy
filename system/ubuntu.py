@@ -79,7 +79,7 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted
 
     def set_timezone(self):
         try:
-            Logger.info("开始设置中国市区")
+            Logger.info("开始设置中国时区")
             subprocess.run("timedatectl set-timezone Asia/Shanghai", shell=True, check=True)
             subprocess.run("date -R", shell=True)
         except subprocess.CalledProcessError:
