@@ -17,6 +17,15 @@ class UbuntuService(BaseService):
     def upgrade_software(self):
         super().upgrade_software()
 
+    # TODO: upgrade_python3
+    def upgrade_python3(self):
+        self.get_python_version()
+        Logger.warn('暂不支持, 请等待后续支持')
+    
+    # TODO: install_docker
+    def install_docker(self):
+        Logger.warn('暂不支持, 请等待后续支持')
+
     def change_apt_source(self):
         Logger.info('备份系统源')
         subprocess.run('cp /etc/apt/sources.list /etc/apt/sources.list.bak', shell=True)
