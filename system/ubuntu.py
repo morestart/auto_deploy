@@ -21,7 +21,7 @@ class UbuntuService(BaseService):
     def upgrade_python3(self):
         self.get_python_version()
         Logger.warn('暂不支持, 请等待后续支持')
-    
+
     # TODO: install_docker
     def install_docker(self):
         Logger.warn('暂不支持, 请等待后续支持')
@@ -79,7 +79,9 @@ deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted
 
     def set_timezone(self):
         try:
+            Logger.info("开始设置中国市区")
             subprocess.run("timedatectl set-timezone Asia/Shanghai", shell=True, check=True)
+            subprocess.run("date -R", shell=True)
         except subprocess.CalledProcessError:
             Logger.error("时区设置错误")
 
