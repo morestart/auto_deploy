@@ -21,10 +21,10 @@ class Menu:
         # self.main_options = ["💼 环境安装", "👀 工具使用", "🏃 退出"]
         self.main_options = ["环境安装", "工具使用", "退出"]
         self.subtitle = "========系统环境配置========"
-        self.sub_options = ["👉 更新Python3", "👉 更新软件包列表", "👉 更新系统软件包",
-                            "👉 更换系统apt源", "👉 设置时区",
-                            "👉 安装JDK8", "👉 安装emqx", "👉 安装mosquitto",
-                            "👉 安装ssh", "👉 安装docker", "👉 安装redis", "👉 安装nginx", "👉 返回主菜单"]
+        self.sub_options = ["更新Python3", "更新软件包列表", "更新系统软件包",
+                            "更换系统apt源", "设置时区",
+                            "安装JDK8", "安装emqx", "安装mosquitto",
+                            "安装ssh", "安装docker", "安装redis", "安装nginx", "返回主菜单"]
 
     def show_menu(self):
         exit_code = True
