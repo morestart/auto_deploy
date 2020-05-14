@@ -94,29 +94,8 @@ class BaseService:
         return
 
 
-class Install:
-    def __init__(self, system_info: str):
-        self.os_name = system_info
-
-    def help_info(self):
-        ...
-
-    def install(self):
-        if self.os_name == 'Windows':
-            Logger.warn('暂不支持此系统')
-        elif self.os_name == "Linux":
-            out = subprocess.check_output("cat /etc/os-release", shell=True)
-            out = out.decode("utf-8").split('\n')
-            # 判断系统为ubuntu1804
-            if "VERSION_ID=\"18.04\"" in out and "NAME=\"Ubuntu\"" in out:
-                ...
-            else:
-                Logger.warn('暂不支持当前版本的ubuntu')
-
-
 if __name__ == '__main__':
     # TODO: 执行前需要先调用更新软件包列表服务
-    import system.ubuntu as ubuntu
     import platform
     system = platform.system()
     from menu.menu import Menu
