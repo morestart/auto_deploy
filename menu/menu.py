@@ -49,8 +49,31 @@ class Menu:
             out = out.decode("utf-8").split('\n')
             # 判断系统为ubuntu1804
             if "VERSION_ID=\"18.04\"" in out and "NAME=\"Ubuntu\"" in out:
-                if command == "查看python3版本":
-                    UbuntuService().get_python_version()
+                # TODO: 其他命令需调用的函数在后面添加,查看py版本放到其他目录中,这里仅做测试使用
+                if command == "更新Python3":
+                    UbuntuService().upgrade_python3()
+                elif command == "更新软件包列表":
+                    UbuntuService().update_source_list()
+                elif command == "更新系统软件包":
+                    UbuntuService().upgrade_software()
+                elif command == "更换系统apt源":
+                    UbuntuService().change_apt_source()
+                elif command == "设置时区":
+                    UbuntuService().set_timezone()
+                elif command == "安装JDK8":
+                    UbuntuService().install_java()
+                elif command == "安装emqx":
+                    UbuntuService().install_emqx()
+                elif command == "安装mosquitto":
+                    UbuntuService().install_mosquitto()
+                elif command == "安装ssh":
+                    UbuntuService().install_ssh()
+                elif command == "安装docker":
+                    UbuntuService().install_docker()
+                elif command == "安装redis":
+                    UbuntuService().install_redis()
+                elif command == "安装nginx":
+                    UbuntuService().install_nginx()
             # TODO: 其他系统
             else:
                 Logger.warn('暂不支持当前系统')
